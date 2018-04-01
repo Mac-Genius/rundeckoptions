@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 
 @Service
@@ -20,7 +21,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
     private final int PAGE_SIZE = 20;
     @Override
     @Cacheable("images")
-    public PairList listImages(String accessName, String accessToken) {
+    public PairList listImages(String accessToken) {
         PairList list = new PairList();
         DigitalOceanClient client = new DigitalOceanClient("v2", accessToken);
         int page = 1;
@@ -46,7 +47,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
 
     @Override
     @Cacheable("regions")
-    public PairList listRegions(String accessName, String accessToken) {
+    public PairList listRegions(String accessToken) {
         PairList list = new PairList();
         DigitalOceanClient client = new DigitalOceanClient("v2", accessToken);
         try {
@@ -65,7 +66,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
 
     @Override
     @Cacheable("sizes")
-    public PairList listSizes(String accessName, String accessToken) {
+    public PairList listSizes(String accessToken) {
         PairList list = new PairList();
         DigitalOceanClient client = new DigitalOceanClient("v2", accessToken);
         DecimalFormat format = new DecimalFormat("$#,##0.00#");
@@ -84,13 +85,12 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
         } catch (DigitalOceanException | RequestUnsuccessfulException e) {
             e.printStackTrace();
         }
-        Collections.sort(list);
         return list;
     }
 
     @Override
     @Cacheable("keys")
-    public PairList listKeys(String accessName, String accessToken) {
+    public PairList listKeys(String accessToken) {
         PairList list = new PairList();
         DigitalOceanClient client = new DigitalOceanClient("v2", accessToken);
         try {
@@ -101,6 +101,50 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
             log.error(e.getMessage(), e);
         }
         Collections.sort(list);
+        return list;
+    }
+
+    @Override
+    public PairList listDroplets(String accessToken) {
+        PairList list = new PairList();
+        DigitalOceanClient client = new DigitalOceanClient("v2", accessToken);
+        int page = 1;
+        try {
+            Droplets droplets = client.getAvailableDroplets(page, PAGE_SIZE);
+            List<Droplet> dropletList = droplets.getDroplets();
+            while (dropletList.size() > 0) {
+                dropletList.forEach(droplet -> {
+                    list.add(new Pair(droplet.getName(), droplet.getId()));
+                });
+                page++;
+                droplets = client.getAvailableDroplets(page, PAGE_SIZE);
+                dropletList = droplets.getDroplets();
+            }
+        } catch (DigitalOceanException | RequestUnsuccessfulException e) {
+            log.error(e.getMessage(), e);
+        }
+        return list;
+    }
+
+    @Override
+    public PairList listTags(String accessToken) {
+        PairList list = new PairList();
+        DigitalOceanClient client = new DigitalOceanClient("v2", accessToken);
+        int page = 1;
+        try {
+            Tags tags = client.getAvailableTags(page, PAGE_SIZE);
+            List<Tag> tagList = tags.getTags();
+            while (tagList.size() > 0) {
+                tagList.forEach(tag -> {
+                    list.add(new Pair(tag.getName(), tag.getName()));
+                });
+                page++;
+                tags = client.getAvailableTags(page, PAGE_SIZE);
+                tagList = tags.getTags();
+            }
+        } catch (DigitalOceanException | RequestUnsuccessfulException e) {
+            log.error(e.getMessage(), e);
+        }
         return list;
     }
 }
