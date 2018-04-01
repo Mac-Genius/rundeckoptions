@@ -11,6 +11,7 @@ import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.text.DecimalFormat;
+import java.util.Collections;
 import java.util.List;
 
 @Service
@@ -28,7 +29,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
             while (images.size() > 0) {
                 images.forEach(image -> {
                     if (image.getSlug() != null) {
-                        list.add(new Pair(image.getName(), image.getSlug()));
+                        list.add(new Pair(image.getDistribution() + " " + image.getName(), image.getSlug()));
                     } else {
                         list.add(new Pair(image.getName(), image.getId() + ""));
                     }
@@ -39,6 +40,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
         } catch (DigitalOceanException | RequestUnsuccessfulException e) {
             e.printStackTrace();
         }
+        Collections.sort(list);
         return list;
     }
 
@@ -57,6 +59,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
         } catch (DigitalOceanException | RequestUnsuccessfulException e) {
             e.printStackTrace();
         }
+        Collections.sort(list);
         return list;
     }
 
@@ -81,6 +84,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
         } catch (DigitalOceanException | RequestUnsuccessfulException e) {
             e.printStackTrace();
         }
+        Collections.sort(list);
         return list;
     }
 
@@ -96,8 +100,7 @@ public class DigitalOceanServiceImpl implements DigitalOceanService {
         } catch (DigitalOceanException | RequestUnsuccessfulException e) {
             log.error(e.getMessage(), e);
         }
+        Collections.sort(list);
         return list;
     }
-
-
 }
