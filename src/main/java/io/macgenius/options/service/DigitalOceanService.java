@@ -8,4 +8,6 @@ public interface DigitalOceanService {
     PairList listRegions(String accessName, String accessToken);
 
     PairList listSizes(String accessName, String accessToken);
+
+    PairList listKeys(String accessName, String accessToken);
 }

@@ -8,4 +8,9 @@ import lombok.Data;
 public class Pair {
     private String name;
     private String value;
+
+    public Pair(String name, Integer value) {
+        this.name = name;
+        this.value = value + "";
+    }
 }

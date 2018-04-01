@@ -27,4 +27,9 @@ public class DigitalOceanController {
     public PairList listSizes(@RequestParam("access_name") String accessName, @RequestParam("access_token") String accessToken) {
         return digitalOceanService.listSizes(accessName, accessToken);
     }
+
+    @RequestMapping(path = "/digitalocean/keys", produces = "application/json", method = RequestMethod.GET)
+    public PairList listKeys(@RequestParam("access_name") String accessName, @RequestParam("access_token") String accessToken) {
+        return digitalOceanService.listKeys(accessName, accessToken);
+    }
 }
